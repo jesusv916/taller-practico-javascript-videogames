@@ -10,10 +10,13 @@ const btnLeft = document.querySelector('#left');
 const btnRight = document.querySelector('#right');
 const btnDown = document.querySelector('#down');
 
+const spanLives = document.querySelector('#lives')
+
 let canvasSize;
 let elementsSize;
 
 let level = 0;
+let lives = 3;
 
 let playerPos = {
     x:undefined,
@@ -62,6 +65,8 @@ function startGame() {
     const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
     console.log({map, mapRows, mapRowCols});
+
+    showLives();
 
     enemyPositions = [];
     game.clearRect(0, 0, canvasSize, canvasSize);
@@ -113,7 +118,7 @@ function movePlayer(){
     });
 
     if (enemyCollision) {
-        console.log("Chocaste contra un enemigo");
+        levelFail();
     }
 
     game.fillText(emojis['PLAYER'], playerPos.x, playerPos.y);
@@ -129,6 +134,34 @@ function levelWin(){
 
 function gameWin(){
     alert('te pasaste el juego');
+}
+
+function showLives(){
+    const heartsArray = Array(lives).fill(emojis['HEART']);
+
+    spanLives.innerHTML = "";
+
+    heartsArray.forEach(heart => spanLives.append(heart) )
+
+
+    spanLives.innerHTML = heartsArray;
+}
+
+function levelFail(){
+    console.log('Chocaste contra un enemigo :(')
+    lives--;
+
+
+    if (lives <= 0){
+        level = 0;
+        lives = 3;
+    }
+
+        playerPos.x = undefined; 
+        playerPos.y = undefined;
+        startGame(); 
+
+
 }
 
 window.addEventListener('keydown', moveByKeys);
