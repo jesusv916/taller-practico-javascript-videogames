@@ -10,13 +10,19 @@ const btnLeft = document.querySelector('#left');
 const btnRight = document.querySelector('#right');
 const btnDown = document.querySelector('#down');
 
-const spanLives = document.querySelector('#lives')
+const spanLives = document.querySelector('#lives');
+const spanTime = document.querySelector('#time');
 
 let canvasSize;
 let elementsSize;
 
 let level = 0;
 let lives = 3;
+
+
+let timeStart;
+let timePlayer;
+let timeInterval;
 
 let playerPos = {
     x:undefined,
@@ -35,16 +41,14 @@ window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize', setCanvasSize);
 
 function setCanvasSize() {
-    if (window.innerHeight > window.innerWidth) {
-        canvasSize = window.innerWidth * 0.8;
-    } else {
-        canvasSize = window.innerHeight * 0.8;
-    }
+    // Calcula el tamaño máximo posible que sea múltiplo de 10
+    const maxDimension = Math.min(window.innerWidth, window.innerHeight) * 0.8;
+    canvasSize = Math.floor(maxDimension / 10) * 10; // ¡MÚLTIPLO DE 10!
     
     canvas.setAttribute('width', canvasSize);
     canvas.setAttribute('height', canvasSize);
     
-    elementsSize = canvasSize / 10;
+    elementsSize = canvasSize / 10; // ¡Siempre entero!
 
     startGame();
 }
@@ -57,6 +61,12 @@ function startGame() {
     game.textAlign = 'end';
 
     const map = maps[level];
+
+    if (!timeStart){
+        timeStart = Date.now();
+        timeInterval = setInterval(showTime, 100);
+    }
+
 
     if (!map) {
         gameWin();
@@ -134,6 +144,7 @@ function levelWin(){
 
 function gameWin(){
     alert('te pasaste el juego');
+    clearInterval(timeInterval);
 }
 
 function showLives(){
@@ -147,6 +158,12 @@ function showLives(){
     spanLives.innerHTML = heartsArray;
 }
 
+function showTime(){
+
+    spanTime.innerHTML = Date.now() - timeStart;
+
+}
+
 function levelFail(){
     console.log('Chocaste contra un enemigo :(')
     lives--;
@@ -155,6 +172,7 @@ function levelFail(){
     if (lives <= 0){
         level = 0;
         lives = 3;
+        timeStart = undefined;
     }
 
         playerPos.x = undefined; 
